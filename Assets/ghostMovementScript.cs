@@ -371,5 +371,111 @@ public class ghostMovementScript : MonoBehaviour {
     	yield return new WaitForSeconds(0.4f);
     	holding = true;
     }
+#pragma warning disable 414
+    private const string TwitchHelpMessage = "Reset the module using !{0} reset. Submit an answer using !{0} submit u l d r. Reading order.";
+#pragma warning restore 414
+    private IEnumerator ProcessTwitchCommand(string command)
+    {
+        command = command.ToLowerInvariant().Trim();
+        if (command == "reset")
+        {
+            yield return null;
+            PacManButton.OnInteract();
+            yield return new WaitForSeconds(.7f);
+            PacManButton.OnInteractEnded();
+            yield break;
+        }
 
+        if (command.StartsWith("submit"))
+        {
+            var parsedCommand = command.Split(' ');
+            if (parsedCommand.Length != 5)
+            {
+                yield return "sendtochaterror Invalid length of command!";
+                yield break;
+            }
+
+            var instructions = parsedCommand.TakeLast(4).ToArray();
+            if (!instructions.All(x => new[]{"u","d","l","r"}.Contains(x)))
+            {
+                yield return "sendtochaterror There is an invalid character in the command, you can only use U,D,L,R!";
+                yield break;
+            }
+
+            var selectables = new List<KMSelectable>();
+            for (var i = 0; i < 4; ++i)
+            {
+                var instructionIndex = Array.IndexOf(new[]{"u","l","d","r"}, instructions[i]);
+                if (GetCurrentDir(i) == instructionIndex)
+                {
+                    continue;
+                }
+                selectables.AddRange(Enumerable.Repeat(GhostButtons[i], Mod(instructionIndex - GetCurrentDir(i))));
+            }
+
+            yield return null;
+            foreach (var selectable in selectables)
+            {
+                selectable.OnInteract();
+                yield return new WaitForSeconds(.1f);
+            }
+            PacManButton.OnInteract();
+            yield return new WaitForSeconds(.01f);
+            PacManButton.OnInteractEnded();
+        }
+    }
+
+    private IEnumerator TwitchHandleForcedSolve()
+    {
+        for (var i = 0; i < 4; i++)
+        {
+            while (GetCurrentDir(i) != GetCurrentAns(i))
+            {
+                GhostButtons[i].OnInteract();
+                yield return new WaitForSeconds(.1f);
+            }
+        }
+        PacManButton.OnInteract();
+        yield return new WaitForSeconds(.01f);
+        PacManButton.OnInteractEnded();
+    }
+
+    private int GetCurrentDir(int i)
+    {
+        switch (i)
+        {
+            case 0:
+                return blinkyCho;
+            case 1:
+                return pinkyCho;
+            case 2:
+                return inkyCho;
+            case 3:
+                return clydeCho;
+            default:
+                throw new InvalidOperationException(string.Format("Error in GetCurrentDir: {0}", i));
+        }
+    }
+    
+    private int GetCurrentAns(int i)
+    {
+        switch (i)
+        {
+            case 0:
+                return blinkyAns;
+            case 1:
+                return pinkyAns;
+            case 2:
+                return inkyAns;
+            case 3:
+                return clydeAns;
+            default:
+                throw new InvalidOperationException(string.Format("Error in GetCurrentAns: {0}", i));
+        }
+    }
+
+    private static int Mod(int i)
+    {
+        return i < 0 ? i + 4 : i;
+    }
 }
