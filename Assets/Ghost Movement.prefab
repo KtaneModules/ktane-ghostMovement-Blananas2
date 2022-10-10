@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 114139553842080666}
   - component: {fileID: 114818206695205770}
   m_Layer: 0
-  m_Name: Template
+  m_Name: Ghost Movement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1693,13 +1693,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Parent: {fileID: 0}
   Children:
-  - {fileID: 114782913704618076}
   - {fileID: 114023367228818050}
+  - {fileID: 114782913704618076}
   - {fileID: 114462471262838644}
   - {fileID: 114361292949797488}
+  - {fileID: 0}
   - {fileID: 114135556153054044}
   IsPassThrough: 0
-  ChildRowLength: 0
+  ChildRowLength: 3
   Highlight: {fileID: 114570430299588062}
   SelectableColliders: []
   DefaultSelectableIndex: 0
