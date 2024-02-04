@@ -128,7 +128,7 @@ public class ghostMovementScript : MonoBehaviour {
 
         inkyX = pointX%28 - blinkyPos%28;
         inkyY = pointX/28 - blinkyPos/28;
-        inkyT = Clamp('Y', inkyY + pacY)*28 + Clamp('X', inkyX + pacX);
+        inkyT = Clamp('Y', inkyY + pointX/28)*28 + Clamp('X', inkyX + pointX%28);
         Debug.LogFormat("[Ghost Movement #{0}] Inky's Target: {1}", moduleId, LocationName(inkyT));
         inkyAns = Target(inkyPos, inkyDir, inkyT);
 
